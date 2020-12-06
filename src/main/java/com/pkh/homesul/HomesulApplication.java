@@ -1,0 +1,13 @@
+package com.pkh.homesul;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class HomesulApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(HomesulApplication.class, args);
+	}
+
+}
