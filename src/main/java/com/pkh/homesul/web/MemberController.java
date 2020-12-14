@@ -1,8 +1,10 @@
 package com.pkh.homesul.web;
 
+import java.io.Console;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -25,10 +27,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pkh.homesul.domain.board.Board1;
-import com.pkh.homesul.domain.member.Coolsms;
 import com.pkh.homesul.domain.member.Member1;
 import com.pkh.homesul.service.MemberService;
 
@@ -42,45 +44,27 @@ public class MemberController {
 	private final MemberService memberService;
 	private final HttpSession session;
 	
-	// 본인인증 SMS전송
-	@PostMapping("/join/MsgSend")
-	public String sendSms(HttpServletRequest request) throws Exception {
-		String api_key = "NCSZW8PLXPXD3BM";
-		String api_secret = "5DPX5JPARI0DPZFTGWDGGUPVI6SD2ZBZ";
-		
-		Message coolsms = new Message(api_key, api_secret);
-		
-		HashMap<String, String> map = new HashMap<String, String>();
-		map.put("to", "01040200358");
-		map.put("phone", (String)request.getParameter("phone"));	// Form에서 전송한 발신번호를 map에 저장
-		map.put("text", (String)request.getParameter("text"));		// Form에서 전송한 문자내용을 map에 저장
-		map.put("type", "SMS");
-		System.out.println(map);
-		
-		JSONObject result = coolsms.send(map);	// 문자보내기&전송결과 받기
-		
-		if( (boolean)result.get("status") == true ) {
-			
-			// 메시지보내기 성공 및 전송결과 출력
-			System.out.println("성공");
-			System.out.println(result.get("group_id"));
-			System.out.println(result.get("result_code"));
-			System.out.println(result.get("result_message"));
-			System.out.println(result.get("success_count"));
-			System.out.println(result.get("error_count"));
-		} else {
-			// 메시지보내기 실패
-			System.out.println("실패");
-			System.out.println(result.get("code"));
-			System.out.println(result.get("message"));
-		}
-		
-		return "sendSms";
-	}
+	// 본인인증 문자전송
+	@GetMapping("/sendSMS")
+    public @ResponseBody
+    String sendSMS(String phoneNumber) {
+
+        Random rand  = new Random();
+        String numStr = "";
+        for(int i=0; i<4; i++) {
+            String ran = Integer.toString(rand.nextInt(10));
+            numStr+=ran;
+        }
+        
+        System.out.println("수신자 번호 : " + phoneNumber);
+        System.out.println("인증번호 : " + numStr);
+        memberService.certifiedPhoneNumber(phoneNumber,numStr);
+        return numStr;
+    }
 	
 	// 회원가입
 	@PostMapping("/join")
-	public ResponseEntity<?> save(@RequestBody Member1 member) {
+	public ResponseEntity<?> saveMember(@RequestBody Member1 member) {
 		memberService.회원가입(member);
 		return new ResponseEntity<String>("ok", HttpStatus.CREATED);
 	}

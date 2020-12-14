@@ -30,5 +30,4 @@ public class Member1 {
 	private String email;
 	private String phone;
 	private String gender;
-	private String status;
 }
