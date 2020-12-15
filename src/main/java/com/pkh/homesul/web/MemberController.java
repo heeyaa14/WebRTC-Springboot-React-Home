@@ -45,9 +45,9 @@ public class MemberController {
 	private final HttpSession session;
 	
 	// 본인인증 문자전송
-	@GetMapping("/sendSMS")
+	@PostMapping("/sendSMS")
     public @ResponseBody
-    String sendSMS(String phoneNumber) {
+    String sendSMS(String inputPhoneNumber) {
 
         Random rand  = new Random();
         String numStr = "";
@@ -56,9 +56,26 @@ public class MemberController {
             numStr+=ran;
         }
         
-        System.out.println("수신자 번호 : " + phoneNumber);
+        System.out.println("수신자 번호 : " + inputPhoneNumber);
         System.out.println("인증번호 : " + numStr);
-        memberService.certifiedPhoneNumber(phoneNumber,numStr);
+        memberService.certifiedPhoneNumber(inputPhoneNumber,numStr);
+        return "ok";
+    }
+	
+	@GetMapping("/sendSMS")
+    public @ResponseBody
+    String sendSMS2(String inputPhoneNumber) {
+
+        Random rand  = new Random();
+        String numStr = "";
+        for(int i=0; i<4; i++) {
+            String ran = Integer.toString(rand.nextInt(10));
+            numStr+=ran;
+        }
+        
+        System.out.println("수신자 번호 : " + inputPhoneNumber);
+        System.out.println("인증번호 : " + numStr);
+        memberService.certifiedPhoneNumber(inputPhoneNumber,numStr);
         return numStr;
     }
 	
